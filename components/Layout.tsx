@@ -2,6 +2,7 @@ import React, { ReactNode, useState, useEffect } from 'react'
 import { Auth } from 'aws-amplify'
 import Link from 'next/link'
 import Head from 'next/head'
+import Modal from './Modal'
 
 interface User {
   username: string
@@ -33,12 +34,21 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => {
 
   const handleOnLogin = async () => {
     try {
+      const user = await Auth.signIn(values.username, values.password);
+      console.log(user);
+      window.location.reload();
+    } catch (error) {
+      console.log('error signing in', error);
+    }
+  }
+
+  const handleOnRegister = async () => {
+    try {
       const { user } = await Auth.signUp({
         username: values.username,
         password: values.password,
         attributes: {
           email: values.email,
-          phone_number: values.phone,
         }
       });
       console.log(user);
@@ -46,16 +56,11 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => {
       console.log('error signing up:', error);
     }
   }
-  const handleOnRegister = async () => {
-    try {
-      await Auth.confirmSignUp(values.username, values.code);
-    } catch (error) {
-      console.log('error confirming sign up', error);
-    }
-  }
+
   const handleOnLogout = async () => {
     try {
       await Auth.signOut();
+      window.location.reload();
     } catch (error) {
       console.log('error signing out: ', error);
     }
@@ -94,20 +99,137 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => {
               {user == null ? (
                 <ul className="flex flex-col lg:flex-row list-none ml-auto">
                   <li className="nav-item">
-                    <div className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" onClick={() => handleOnLogin()}>
-                      <Link href="#">LOGIN</Link>
+                    <div className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white">
+                      <Modal text="LOGIN">
+                        <form
+                        // onSubmit={async (e) => {
+                        //   e.preventDefault();
+                        // }}
+                        >
+                          <div className="relative w-full mb-3">
+                            <label
+                              className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                              htmlFor="grid-password"
+                            >
+                              Username
+                            </label>
+                            <input
+                              className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
+                              type="username"
+                              placeholder="Username"
+                              onChange={e => setValues({ ...values, 'username': e.target.value })}
+                              style={{ transition: "all .15s ease" }}
+                            />
+                          </div>
+
+                          <div className="relative w-full mb-3">
+                            <label
+                              className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                              htmlFor="grid-password"
+                            >
+                              Password
+                            </label>
+                            <input
+                              className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
+                              type="password"
+                              placeholder="Password"
+                              onChange={e => setValues({ ...values, 'password': e.target.value })}
+                              style={{ transition: "all .15s ease" }}
+                            />
+                          </div>
+
+                          <div className="text-center mt-6">
+                            <button
+                              className="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
+                              type="button"
+                              style={{ transition: "all .15s ease" }}
+                              onClick={() => handleOnLogin()}
+                            >
+                              Login
+                            </button>
+                          </div>
+                        </form>
+                      </Modal>
                     </div>
                   </li>
                   <li className="nav-item">
-                    <div className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" onClick={() => handleOnRegister()}>
-                      <Link href="#">REGISTER</Link>
+                    <div className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white">
+                      <Modal text="REGISTER">
+                        <form
+                        // onSubmit={async (e) => {
+                        //   e.preventDefault();
+                        // }}
+                        >
+                          <div className="relative w-full mb-3">
+                            <label
+                              className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                              htmlFor="grid-password"
+                            >
+                              Email
+                            </label>
+                            <input
+                              className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
+                              type="email"
+                              placeholder="Email"
+                              onChange={e => setValues({ ...values, 'email': e.target.value })}
+                              style={{ transition: "all .15s ease" }}
+                            />
+                          </div>
+
+                          <div className="relative w-full mb-3">
+                            <label
+                              className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                              htmlFor="grid-password"
+                            >
+                              Username
+                            </label>
+                            <input
+                              className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
+                              type="username"
+                              placeholder="Username"
+                              onChange={e => setValues({ ...values, 'username': e.target.value })}
+                              style={{ transition: "all .15s ease" }}
+                            />
+                          </div>
+
+                          <div className="relative w-full mb-3">
+                            <label
+                              className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                              htmlFor="grid-password"
+                            >
+                              Password
+                            </label>
+                            <input
+                              className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
+                              type="password"
+                              placeholder="Password"
+                              onChange={e => setValues({ ...values, 'password': e.target.value })}
+                              style={{ transition: "all .15s ease" }}
+                            />
+                          </div>
+
+                          <div className="text-center mt-6">
+                            <button
+                              className="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full"
+                              type="button"
+                              style={{ transition: "all .15s ease" }}
+                              onClick={() => handleOnRegister()}
+                            >
+                              Register
+                            </button>
+                          </div>
+                        </form>
+                      </Modal>
                     </div>
                   </li>
                 </ul>
               ) : (
                 <ul className="flex flex-col lg:flex-row list-none ml-auto">
                   <li className="nav-item">
-                    <div className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75" onClick={() => handleOnLogout()}>
+                    <div
+                      className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                      onClick={() => handleOnLogout()}
+                    >
                       <Link href="#">LOGOUT</Link>
                     </div>
                   </li>
